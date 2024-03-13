@@ -1,4 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.128.0/build/three.module.js";
+// Import OrbitControls
 import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
@@ -12,6 +13,7 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Texture loader for the Earth texture
 const textureLoader = new THREE.TextureLoader();
 const earthTexture = textureLoader.load("./assets/earthmap.jpg");
 const earthGeometry = new THREE.SphereGeometry(5, 32, 32);
@@ -19,6 +21,7 @@ const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earth);
 
+// Locations array as previously defined
 const locations = [
   { lat: 52.2129919, lon: 5.2793703 }, // Netherlands
   { lat: 50.5010789, lon: 4.4764595 }, // Belgium
@@ -52,8 +55,14 @@ camera.position.z = 15;
 // Instantiate the OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
 
+// Adjust controls settings
+controls.enableDamping = true; // Optional, but this gives a smoother control feel
+controls.dampingFactor = 0.05;
+
 function animate() {
   requestAnimationFrame(animate);
+  // Required if controls.enableDamping or controls.autoRotate are set to true
+  controls.update(); 
   earth.rotation.y += 0.005; // Rotates the Earth for the spinning effect
   renderer.render(scene, camera);
 }
