@@ -12,24 +12,23 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const textureLoader = new THREE.TextureLoader();
-const earthTexture = textureLoader.load("./assets/earthmap.jpg"); // Use a publicly available texture
-
+const earthTexture = textureLoader.load("./assets/earthmap.jpg");
 const earthGeometry = new THREE.SphereGeometry(5, 32, 32);
 const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earth);
 
 const locations = [
-  { lat: -34.6037, lon: -58.3816 }, // Example: Buenos Aires, Argentina
-  { lat: 40.7128, lon: -74.006 }, // Example: New York, USA
-  { lat: 35.6895, lon: 139.6917 }, // Example: Tokyo, Japan
-  { lat: 51.5074, lon: -0.1278 }, // Example: London, UK
-  { lat: 48.8566, lon: 2.3522 }, // Example: Paris, France
-  { lat: 55.7558, lon: 37.6173 }, // Example: Moscow, Russia
-  { lat: -33.8688, lon: 151.2093 }, // Example: Sydney, Australia
-  { lat: 19.4326, lon: -99.1332 }, // Example: Mexico City, Mexico
-  { lat: 39.9042, lon: 116.4074 }, // Example: Beijing, China
-];
+  { lat: 52.2129919, lon: 5.2793703 }, // Netherlands
+  { lat: 50.5010789, lon: 4.4764595 }, // Belgium
+  { lat: 51.1642292, lon: 10.4541194 }, // Germany
+  { lat: 47.6964719, lon: 13.3457347 }, // Austria
+  { lat: 62.1983366, lon: 17.5671981 }, // Sweden
+  { lat: 64.9146659, lon: 26.0672554 }, // Finland
+  { lat: 64.5783089, lon: 17.888237 }, // Norway
+  { lat: 55.9396761, lon: 9.5155848 }, // Denmark
+  { lat: 55.3617609, lon: -3.4433238 }, // UK
+]
 
 locations.forEach((location) => {
   const { lat, lon } = location;
