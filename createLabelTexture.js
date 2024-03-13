@@ -33,7 +33,12 @@ export default function createLabelTexture(name, flagSrc) {
 
       const flagWidth = canvas.height;
       roundRect(context, 0, 0, flagWidth, flagWidth, flagWidth / 2);
-      context.drawImage(flagImage, 0, 0, flagWidth, flagWidth);
+
+      const flagSize = Math.min(canvas.width, canvas.height) / 1.5;
+      const flagX = 5;
+      const flagY = (canvas.height - flagSize) / 2;
+
+      context.drawImage(flagImage, flagX, flagY, flagSize, flagSize);
 
       // Set text styles
       context.fillStyle = "white";
