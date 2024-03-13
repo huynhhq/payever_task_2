@@ -17,7 +17,16 @@
 </head>
 
 <body>
-    <script type="module" src="./main.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.131/build/three.module.js",
+            "jsm/": "https://cdn.jsdelivr.net/npm/three@0.131/examples/jsm/"
+    }
+        }
+    </script>
+    <script type="module" src="./main.js">
+    </script>
 </body>
 
 </html>
