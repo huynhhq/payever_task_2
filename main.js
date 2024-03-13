@@ -1,4 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.128.0/build/three.module.js";
+import { OrbitControls } from 'https://unpkg.com/three/examples/jsm/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -47,6 +48,9 @@ locations.forEach((location) => {
 });
 
 camera.position.z = 15;
+
+// Instantiate the OrbitControls
+const controls = new OrbitControls(camera, renderer.domElement);
 
 function animate() {
   requestAnimationFrame(animate);
