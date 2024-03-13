@@ -2,6 +2,10 @@ import * as THREE from "three";
 import createLabelTexture from "./createLabelTexture.js";
 import { OrbitControls } from "jsm/controls/OrbitControls.js";
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let INTERSECTED = null;
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -25,7 +29,7 @@ scene.add(earth);
 const locations = [
   {
     name: "Netherlands",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/netherlands.png",
     position: {
       lat: 52.2129919,
       lon: 5.2793703,
@@ -33,7 +37,7 @@ const locations = [
   }, // Netherlands
   {
     name: "Belgium",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/belgium.png",
     position: {
       lat: 50.5010789,
       lon: 4.4764595,
@@ -41,7 +45,7 @@ const locations = [
   }, // Belgium
   {
     name: "Germany",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/germany.png",
     position: {
       lat: 51.1642292,
       lon: 10.4541194,
@@ -49,7 +53,7 @@ const locations = [
   }, // Germany
   {
     name: "Austria",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/austria.png",
     position: {
       lat: 47.6964719,
       lon: 13.3457347,
@@ -57,7 +61,7 @@ const locations = [
   }, // Austria
   {
     name: "Sweden",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/sweden.png",
     position: {
       lat: 62.1983366,
       lon: 17.5671981,
@@ -65,7 +69,7 @@ const locations = [
   }, // Sweden
   {
     name: "Finland",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/finland.png",
     position: {
       lat: 64.9146659,
       lon: 26.0672554,
@@ -73,7 +77,7 @@ const locations = [
   }, // Finland
   {
     name: "Norway",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/norway.png",
     position: {
       lat: 64.5783089,
       lon: 17.888237,
@@ -81,7 +85,7 @@ const locations = [
   }, // Norway
   {
     name: "Denmark",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/denmark.png",
     position: {
       lat: 55.9396761,
       lon: 9.5155848,
@@ -89,13 +93,16 @@ const locations = [
   }, // Denmark
   {
     name: "UK",
-    flag: "https://latitude.to/img/flags/at.png",
+    flag: "./assets/flags/uk.png",
     position: {
       lat: 55.3617609,
       lon: -3.4433238,
     },
   }, // UK
 ];
+
+const markers = [];
+const labels = new Map();
 
 for (const location of locations) {
   const { lat, lon } = location.position;
@@ -106,41 +113,70 @@ for (const location of locations) {
   const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
   const marker = new THREE.Mesh(geometry, material);
 
-  marker.position.x = -5 * Math.sin(phi) * Math.cos(theta);
-  marker.position.y = 5 * Math.cos(phi);
-  marker.position.z = 5 * Math.sin(phi) * Math.sin(theta);
+  const posX = -5 * Math.sin(phi) * Math.cos(theta);
+  const posY = 5 * Math.cos(phi);
+  const posZ = 5 * Math.sin(phi) * Math.sin(theta);
+
+  marker.position.x = posX;
+  marker.position.y = posY;
+  marker.position.z = posZ;
 
   earth.add(marker);
 
-  const labelTexture = await createLabelTexture(location.name, location.flag);
-  const labelMaterial = new THREE.SpriteMaterial({
-    map: labelTexture,
-    transparent: true,
-  });
-  const label = new THREE.Sprite(labelMaterial);
-  label.scale.set(3, 0.75, 1);
-  label.position.set(
-    marker.position.x,
-    marker.position.y + 1,
-    marker.position.z
-  );
+  const label = await createLabelTexture(location.name, location.flag);
+  label.visible = false;
+  label.position.set(posX, posY + 1, posZ);
   scene.add(label);
+
+  markers.push(marker);
+  labels.set(marker, label);
 }
 
-camera.position.z = 15;
+camera.position.z = 10;
 
 // Instantiate the OrbitControls
 const controls = new OrbitControls(camera, renderer.domElement);
-
 // Adjust controls settings
 controls.enableDamping = true; // Optional, but this gives a smoother control feel
 controls.dampingFactor = 0.05;
 
+renderer.domElement.addEventListener("click", onDocumentMouseDown, false);
+function onDocumentMouseDown(event) {
+  event.preventDefault();
+
+  mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+  mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(markers);
+
+  if (intersects.length > 0) {
+    if (INTERSECTED != intersects[0].object) {
+      if (INTERSECTED) labels.get(INTERSECTED).visible = false; // Hide the previous tooltip
+
+      INTERSECTED = intersects[0].object;
+      labels.get(INTERSECTED).visible = true; // Show the new tooltip
+    }
+  } else {
+    if (INTERSECTED) labels.get(INTERSECTED).visible = false; // Hide the tooltip when clicking elsewhere
+    INTERSECTED = null;
+  }
+}
+
 function animate() {
   requestAnimationFrame(animate);
-  // Required if controls.enableDamping or controls.autoRotate are set to true
   controls.update();
-  earth.rotation.y += 0.005; // Rotates the Earth for the spinning effect
+
+  labels.forEach((label, marker) => {
+    if (label.visible) {
+      // Calculate the new position for the label
+      const newPosition = marker.position
+        .clone()
+        .add(new THREE.Vector3(0, 0.5, 0)); // Adjust the Y-offset as needed
+      label.position.copy(newPosition);
+    }
+  });
+
   renderer.render(scene, camera);
 }
 
