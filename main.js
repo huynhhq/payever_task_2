@@ -25,7 +25,7 @@ scene.add(earth);
 const locations = [
   {
     name: "Netherlands",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 52.2129919,
       lon: 5.2793703,
@@ -33,7 +33,7 @@ const locations = [
   }, // Netherlands
   {
     name: "Belgium",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 50.5010789,
       lon: 4.4764595,
@@ -41,7 +41,7 @@ const locations = [
   }, // Belgium
   {
     name: "Germany",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 51.1642292,
       lon: 10.4541194,
@@ -49,7 +49,7 @@ const locations = [
   }, // Germany
   {
     name: "Austria",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 47.6964719,
       lon: 13.3457347,
@@ -57,7 +57,7 @@ const locations = [
   }, // Austria
   {
     name: "Sweden",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 62.1983366,
       lon: 17.5671981,
@@ -65,7 +65,7 @@ const locations = [
   }, // Sweden
   {
     name: "Finland",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 64.9146659,
       lon: 26.0672554,
@@ -73,7 +73,7 @@ const locations = [
   }, // Finland
   {
     name: "Norway",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 64.5783089,
       lon: 17.888237,
@@ -81,7 +81,7 @@ const locations = [
   }, // Norway
   {
     name: "Denmark",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 55.9396761,
       lon: 9.5155848,
@@ -89,7 +89,7 @@ const locations = [
   }, // Denmark
   {
     name: "UK",
-    flagUrl: "https://latitude.to/img/flags/at.png",
+    flag: "https://latitude.to/img/flags/at.png",
     position: {
       lat: 55.3617609,
       lon: -3.4433238,
@@ -112,7 +112,7 @@ for (const location of locations) {
 
   earth.add(marker);
 
-  const labelTexture = await createLabelTexture(name, flag);
+  const labelTexture = await createLabelTexture(location.name, location.flag);
   const labelMaterial = new THREE.SpriteMaterial({
     map: labelTexture,
     transparent: true,
