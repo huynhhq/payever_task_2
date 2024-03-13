@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export default function createLabelTexture(name, flagImageSrc) {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
